@@ -36,7 +36,7 @@ public class PersonServiceImpl implements PersonService {
 	
 	@PostConstruct
 	private void init() {
-		doInitialLoad();
+		//doInitialLoad();
 	}
 	
 	private void doInitialLoad() {

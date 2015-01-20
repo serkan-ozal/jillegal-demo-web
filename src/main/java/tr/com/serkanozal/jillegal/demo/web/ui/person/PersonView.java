@@ -11,6 +11,7 @@ import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.Reindeer;
 
 @SuppressWarnings("serial")
 public class PersonView extends VerticalLayout {
@@ -21,6 +22,7 @@ public class PersonView extends VerticalLayout {
 		addComponent(lbl);
 		setComponentAlignment(lbl, Alignment.MIDDLE_CENTER);
 		
+		setStyleName(Reindeer.LAYOUT_BLUE);
 		setSizeFull();
 	}
 	

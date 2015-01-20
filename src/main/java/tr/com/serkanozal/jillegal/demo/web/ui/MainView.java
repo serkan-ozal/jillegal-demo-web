@@ -7,20 +7,26 @@
  
 package tr.com.serkanozal.jillegal.demo.web.ui;
 
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Label;
+import tr.com.serkanozal.jillegal.demo.web.ui.monitoring.MonitoringView;
+import tr.com.serkanozal.jillegal.demo.web.ui.person.PersonView;
+
+import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.Reindeer;
 
 @SuppressWarnings("serial")
 public class MainView extends VerticalLayout {
 
 	public MainView() {
-		Label lbl = new Label("<center>" + "Welcome to JILLEGAL Demo" + "</center>", ContentMode.HTML);
+		TabSheet tabSheet = new TabSheet();
 		
-		addComponent(lbl);
-		setComponentAlignment(lbl, Alignment.MIDDLE_CENTER);
+		tabSheet.setStyleName(Reindeer.LAYOUT_BLUE);
+		tabSheet.addTab(new PersonView(), "Person View");
+		tabSheet.addTab(new MonitoringView(), "Monitoring View");
+		tabSheet.setSizeFull();
 		
+		addComponent(tabSheet);
+		setStyleName(Reindeer.LAYOUT_BLUE);
 		setSizeFull();
 	}
 	
