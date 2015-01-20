@@ -15,9 +15,9 @@ import tr.com.serkanozal.jillegal.offheap.service.OffHeapService;
 
 public class Person implements OffHeapAwareObject {
 
-	protected static final long MILLI_SECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
-	protected static final long MILLI_SECONDS_IN_A_MONTH = 30 * MILLI_SECONDS_IN_A_DAY;
-	protected static final long MILLI_SECONDS_IN_A_YEAR = 365 * MILLI_SECONDS_IN_A_DAY;
+	public static final long MILLI_SECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
+	public static final long MILLI_SECONDS_IN_A_MONTH = 30 * MILLI_SECONDS_IN_A_DAY;
+	public static final long MILLI_SECONDS_IN_A_YEAR = 365 * MILLI_SECONDS_IN_A_DAY;
 	
 	private long id;
 	private String username;

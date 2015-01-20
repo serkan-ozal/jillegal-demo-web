@@ -12,10 +12,14 @@ import org.springframework.stereotype.Repository;
 import tr.com.serkanozal.jillegal.demo.web.dao.PersonDAO;
 import tr.com.serkanozal.jillegal.demo.web.domain.Person;
 import tr.com.serkanozal.jillegal.offheap.collection.map.OffHeapJudyHashMap;
+import tr.com.serkanozal.jillegal.offheap.service.OffHeapService;
+import tr.com.serkanozal.jillegal.offheap.service.OffHeapServiceFactory;
 
 @Repository
 public class OffHeapPersonDAO implements PersonDAO {
 
+	private static final OffHeapService offHeapService = OffHeapServiceFactory.getOffHeapService();
+	
 	private final OffHeapJudyHashMap<Long, Person> personMap = 
 			new OffHeapJudyHashMap<Long, Person>(Long.class, Person.class);
 	
@@ -26,7 +30,7 @@ public class OffHeapPersonDAO implements PersonDAO {
 	
 	@Override
 	public Person save(Person person) {
-		return personMap.put(person.getId(), person);
+		return personMap.put(offHeapService.getOffHeapLong(person.getId()), person);
 	}
 	
 	@Override
