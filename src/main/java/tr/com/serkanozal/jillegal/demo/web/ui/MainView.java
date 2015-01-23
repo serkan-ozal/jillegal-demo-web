@@ -9,6 +9,7 @@ package tr.com.serkanozal.jillegal.demo.web.ui;
 
 import tr.com.serkanozal.jillegal.demo.web.ui.monitoring.MonitoringView;
 import tr.com.serkanozal.jillegal.demo.web.ui.person.PersonView;
+import tr.com.serkanozal.jillegal.demo.web.util.SpringContextProvider;
 
 import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.VerticalLayout;
@@ -17,12 +18,12 @@ import com.vaadin.ui.themes.Reindeer;
 @SuppressWarnings("serial")
 public class MainView extends VerticalLayout {
 
-	public MainView() {
+	public MainView(SpringContextProvider springContextProvider) {
 		TabSheet tabSheet = new TabSheet();
 		
 		tabSheet.setStyleName(Reindeer.LAYOUT_BLUE);
-		tabSheet.addTab(new PersonView(), "Person View");
-		tabSheet.addTab(new MonitoringView(), "Monitoring View");
+		tabSheet.addTab(new PersonView(springContextProvider), "Person View");
+		tabSheet.addTab(new MonitoringView(springContextProvider), "Monitoring View");
 		tabSheet.setSizeFull();
 		
 		addComponent(tabSheet);

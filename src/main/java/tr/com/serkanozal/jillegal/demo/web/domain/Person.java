@@ -9,12 +9,10 @@ package tr.com.serkanozal.jillegal.demo.web.domain;
 
 import java.util.Date;
 
-import tr.com.serkanozal.jillegal.offheap.OffHeapAwareObject;
-import tr.com.serkanozal.jillegal.offheap.memory.DirectMemoryService;
-import tr.com.serkanozal.jillegal.offheap.service.OffHeapService;
+public class Person {
 
-public class Person implements OffHeapAwareObject {
-
+	public static final int MAX_PERSON_COUNT = 1000000;
+	
 	public static final long MILLI_SECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
 	public static final long MILLI_SECONDS_IN_A_MONTH = 30 * MILLI_SECONDS_IN_A_DAY;
 	public static final long MILLI_SECONDS_IN_A_YEAR = 365 * MILLI_SECONDS_IN_A_DAY;
@@ -128,16 +126,4 @@ public class Person implements OffHeapAwareObject {
 		return (int) id;
 	}
 
-	@Override
-	public void onGet(OffHeapService offHeapService, DirectMemoryService directMemoryService) {
-		
-	}
-
-	@Override
-	public void onFree(OffHeapService offHeapService, DirectMemoryService directMemoryService) {
-		offHeapService.freeString(username);
-		offHeapService.freeString(firstName);
-		offHeapService.freeString(lastName);
-	}
-	
 }

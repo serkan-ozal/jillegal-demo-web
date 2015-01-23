@@ -27,8 +27,9 @@ public class PersonServiceImpl implements PersonService {
 
 	private static final Logger logger = Logger.getLogger(PersonServiceImpl.class);
 	
-	private static final int MAX_PERSON_COUNT = 1000000;
+	private static final int SAVE_COUNT_IN_A_SCHEDULE = 100;
 	private static final Random RANDOM = new Random();
+	private static volatile boolean initiallyLoaded = false;
 	
 	@Autowired
 	private PersonDAO personDAO;
@@ -36,18 +37,21 @@ public class PersonServiceImpl implements PersonService {
 	
 	@PostConstruct
 	private void init() {
-		//doInitialLoad();
+		doInitialLoad();
 	}
 	
-	private void doInitialLoad() {
-		logger.info("Started doing initial load ...");
-
-		for (int i = 0; i < MAX_PERSON_COUNT; i++) {
-			Person person = newPerson();
-			personDAO.save(randomizePerson(i, person));
-		}
-		
-		logger.info("Finished doing initial load ...");
+	private synchronized void doInitialLoad() {
+		if (!initiallyLoaded) {
+			logger.info("Started doing initial load ...");
+	
+			for (int i = 0; i < Person.MAX_PERSON_COUNT; i++) {
+				Person person = newPerson();
+				personDAO.save(randomizePerson(i, person));
+			}
+			
+			logger.info("Finished doing initial load ...");
+			initiallyLoaded = true;
+		}	
 	}
 	
 	private Person randomizePerson(int key, Person person) {
@@ -67,9 +71,11 @@ public class PersonServiceImpl implements PersonService {
 	
 	@Scheduled(initialDelay = 60 * 1000, fixedRate = 100)
 	public void saveRandomPerson() {
-		int id = RANDOM.nextInt(MAX_PERSON_COUNT);
-		Person person = newPerson();
-		personDAO.save(randomizePerson(id, person));
+		for (int i = 0; i < SAVE_COUNT_IN_A_SCHEDULE; i++) {
+			int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
+			Person person = newPerson();
+			personDAO.save(randomizePerson(id, person));
+		}	
 	}
 	
 	@Override
@@ -84,8 +90,31 @@ public class PersonServiceImpl implements PersonService {
 
 	@Override
 	public void save(Person person) {
+		if (person.getId() < 0 || person.getId() > Person.MAX_PERSON_COUNT) {
+			throw new IllegalArgumentException("ID can be between 0 and " + Person.MAX_PERSON_COUNT);
+		}
+		
+		if (!offHeapService.isInOffHeap(person.getUsername())) {
+			person.setUsername(offHeapService.newString(person.getUsername()));
+		}
+		if (!offHeapService.isInOffHeap(person.getFirstName())) {
+			person.setFirstName(offHeapService.newString(person.getFirstName()));
+		}
+		if (!offHeapService.isInOffHeap(person.getLastName())) {
+			person.setLastName(offHeapService.newString(person.getLastName()));
+		}
+		
 		Person oldPerson = personDAO.save(person);
 		if (oldPerson != null) {
+			if (oldPerson.getUsername() != person.getUsername()) {
+				offHeapService.freeString(oldPerson.getUsername());
+			}
+			if (oldPerson.getFirstName() != person.getFirstName()) {
+				offHeapService.freeString(oldPerson.getFirstName());
+			}
+			if (oldPerson.getLastName() != person.getLastName()) {
+				offHeapService.freeString(oldPerson.getLastName());
+			}
 			offHeapService.freeObject(oldPerson);
 		}
 	}
@@ -94,6 +123,9 @@ public class PersonServiceImpl implements PersonService {
 	public boolean remove(long id) {
 		Person removedPerson = personDAO.remove(id);
 		if (removedPerson != null) {
+			offHeapService.freeString(removedPerson.getUsername());
+			offHeapService.freeString(removedPerson.getFirstName());
+			offHeapService.freeString(removedPerson.getLastName());
 			offHeapService.freeObject(removedPerson);
 			return true;
 		}

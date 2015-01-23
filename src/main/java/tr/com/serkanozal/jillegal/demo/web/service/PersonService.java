@@ -10,7 +10,7 @@ package tr.com.serkanozal.jillegal.demo.web.service;
 import tr.com.serkanozal.jillegal.demo.web.domain.Person;
 
 public interface PersonService {
-
+	
 	Person newPerson();
 	Person get(long id);
 	void save(Person person);
