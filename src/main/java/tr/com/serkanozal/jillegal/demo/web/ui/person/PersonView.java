@@ -52,6 +52,8 @@ public class PersonView extends VerticalLayout {
 		
 		VerticalLayout vl = new VerticalLayout();
 		
+		/////////////////////////////////////////////////////////////////////////////////////////
+		
 		pnlFetchPerson = new Panel();
 		pnlFetchPerson.setCaption("Fetch Person");
 		pnlFetchPerson.addStyleName(Reindeer.LAYOUT_BLUE);

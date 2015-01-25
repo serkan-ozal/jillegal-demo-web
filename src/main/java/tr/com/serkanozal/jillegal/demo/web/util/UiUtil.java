@@ -18,7 +18,7 @@ public class UiUtil {
 	}
 	
 	public static void showInfoMessage(String message) {
-		showErrorMessage("Info", message);
+		showInfoMessage("Info", message);
 	}
 	
 	public static void showInfoMessage(String caption, String message) {
@@ -26,7 +26,7 @@ public class UiUtil {
 	}
 	
 	public static void showWarningMessage(String message) {
-		showErrorMessage("Warning", message);
+		showWarningMessage("Warning", message);
 	}
 	
 	public static void showWarningMessage(String caption, String message) {
@@ -43,10 +43,7 @@ public class UiUtil {
 	
 	private static void showMessage(String caption, String message, Type type) {
 		Notification notification = 
-				new Notification(
-						caption,
-						message, 
-						type);
+				new Notification(caption, message, type);
 		notification.show(Page.getCurrent());
 	}
 	

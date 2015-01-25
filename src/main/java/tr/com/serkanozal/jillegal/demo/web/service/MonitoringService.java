@@ -7,17 +7,16 @@
 
 package tr.com.serkanozal.jillegal.demo.web.service;
 
-import tr.com.serkanozal.jillegal.demo.web.domain.Person;
+import tr.com.serkanozal.jillegal.demo.web.domain.EnvironmentInfo;
+import tr.com.serkanozal.jillegal.demo.web.domain.GCStats;
+import tr.com.serkanozal.jillegal.demo.web.domain.MemoryStats;
 import tr.com.serkanozal.jillegal.demo.web.domain.PersonStats;
 
-public interface PersonService {
+public interface MonitoringService {
 	
-	Person newPerson();
-	
-	Person get(long id);
-	void save(Person person);
-	boolean remove(long id);
-	
+	EnvironmentInfo getEnvironmentInfo();
 	PersonStats getPersonStats();
+	MemoryStats getMemoryStats();
+	GCStats getGCStats();
 	
 }

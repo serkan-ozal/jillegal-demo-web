@@ -30,8 +30,7 @@ public class OffHeapPersonDAO implements PersonDAO {
 	
 	@Override
 	public Person save(Person person) {
-		// return personMap.put(offHeapService.getOffHeapLong(person.getId()), person);
-		return personMap.put(person.getId(), person);
+		return personMap.put(offHeapService.getOffHeapLong(person.getId()), person);
 	}
 	
 	@Override
