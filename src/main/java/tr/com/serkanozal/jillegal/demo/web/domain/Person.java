@@ -11,7 +11,7 @@ import java.util.Date;
 
 public class Person {
 
-	public static final int MAX_PERSON_COUNT = 1000000;
+	public static final int MAX_PERSON_COUNT = Integer.getInteger("jillegal.demo.web.maxPersonCount", 1000000);
 	
 	public static final long MILLI_SECONDS_IN_A_DAY = 24 * 60 * 60 * 1000;
 	public static final long MILLI_SECONDS_IN_A_MONTH = 30 * MILLI_SECONDS_IN_A_DAY;

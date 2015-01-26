@@ -161,8 +161,6 @@ public class MonitoringServiceImpl implements MonitoringService {
 		memoryStats.setMaxHeapMemory(RUNTIME.maxMemory());
 		memoryStats.setCommittedHeapMemory(RUNTIME.totalMemory());
 		memoryStats.setUsedHeapMemory(RUNTIME.totalMemory() - RUNTIME.freeMemory());
-		
-		logger.info(memoryStats);
 	}
 
 	@Override
@@ -201,13 +199,18 @@ public class MonitoringServiceImpl implements MonitoringService {
         gcStats.setMinorTime(minorTime);
         gcStats.setUnknownCount(unknownCount);
         gcStats.setUnknownTime(unknownTime);
-        
-        logger.info(gcStats);
 	}
 
 	@Override
 	public GCStats getGCStats() {
 		return gcStats;
+	}
+	
+	@Scheduled(initialDelay = 1000, fixedRate = 1000)
+	private void logMonitoringInformations() {
+		logger.info(memoryStats);
+		logger.info(gcStats);
+		logger.info(getPersonStats());
 	}
 	
 }

@@ -1,0 +1,1 @@
+mvn beanstalk:terminate-environment

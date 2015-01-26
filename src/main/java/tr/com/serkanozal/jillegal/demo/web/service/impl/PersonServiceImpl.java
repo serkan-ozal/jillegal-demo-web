@@ -69,7 +69,7 @@ public class PersonServiceImpl implements PersonService {
 	
 	@Autowired
 	private PersonDAO personDAO;
-	private final PersonStats personStats = new PersonStats();
+	private volatile PersonStats personStats = new PersonStats();
 	
 	private class CharArray {
 		
