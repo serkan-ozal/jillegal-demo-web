@@ -103,7 +103,7 @@ public class MemoryStats {
 				+ ", totalSwapSpace=" + (totalSwapSpace / BYTES_IN_A_MB + " MB") 
 				+ ", freeSwapSpace=" + (freeSwapSpace / BYTES_IN_A_MB + " MB") 
 				+ ", totalOffHeapMemory=" + (totalOffHeapMemory / BYTES_IN_A_MB + " MB") 
-				+ ", usedOffHeapMemory=" + (usedOffHeapMemory / 1 + " MB") 
+				+ ", usedOffHeapMemory=" + (usedOffHeapMemory / BYTES_IN_A_MB + " MB") 
 				+ ", maxHeapMemory=" + (maxHeapMemory / BYTES_IN_A_MB + " MB")
 				+ ", committedHeapMemory=" + (committedHeapMemory / BYTES_IN_A_MB + " MB")
 				+ ", usedHeapMemory=" + (usedHeapMemory / BYTES_IN_A_MB + " MB") + "]";

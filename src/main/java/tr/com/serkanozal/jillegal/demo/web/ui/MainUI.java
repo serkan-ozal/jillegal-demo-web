@@ -11,12 +11,14 @@ import javax.servlet.annotation.WebServlet;
 
 import tr.com.serkanozal.jillegal.demo.web.util.SpringContextProvider;
 
+import com.vaadin.annotations.Push;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.UI;
 
 @SuppressWarnings("serial")
+@Push
 public class MainUI extends UI {
 
 	@WebServlet(value = "/*", asyncSupported = true)
