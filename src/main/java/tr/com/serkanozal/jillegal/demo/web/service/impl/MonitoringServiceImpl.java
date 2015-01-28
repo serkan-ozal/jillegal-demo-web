@@ -11,6 +11,7 @@ import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -62,6 +63,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 	
     private static final MemoryAllocator MEMORY_ALLOCATOR = 
     		OffHeapServiceFactory.getOffHeapService().getDirectMemoryService().getMemoryAllocator();
+    private static final Date START_TIME = new Date();
     
 	private final EnvironmentInfo environmentInfo = findEnvironmentInfo();
 	private final MemoryStats memoryStats = new MemoryStats();
@@ -136,6 +138,11 @@ public class MonitoringServiceImpl implements MonitoringService {
 		logger.info(environmentInfo);
 		
 		return environmentInfo;
+	}
+	
+	@Override
+	public Date getStartTime() {
+		return START_TIME;
 	}
 	
 	@Override

@@ -7,6 +7,7 @@
  
 package tr.com.serkanozal.jillegal.demo.web.ui.monitoring;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -28,15 +29,9 @@ import com.vaadin.ui.themes.Reindeer;
 @SuppressWarnings("serial")
 public class MonitoringView extends VerticalLayout {
 
-	private Panel pnlEnvironmentInfo;
-	
-	
-	private Panel pnlMemoryStats;
-	private Panel pnlGCStats;
-	private Panel pnlPersonStats;
-	
 	private Timer monitoringRefresherTimer;
 	
+	@SuppressWarnings("deprecation")
 	public MonitoringView(SpringContextProvider springContextProvider) {
 		final MonitoringService monitoringService = springContextProvider.getBean(MonitoringService.class);
 		
@@ -44,12 +39,12 @@ public class MonitoringView extends VerticalLayout {
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
 		
-		pnlEnvironmentInfo = new Panel();
+		Panel pnlEnvironmentInfo = new Panel();
 		pnlEnvironmentInfo.setCaption("Environment Info");
 		pnlEnvironmentInfo.addStyleName(Reindeer.LAYOUT_BLUE);
 		pnlEnvironmentInfo.setWidth("100%");
 		
-		GridLayout lytEnvironmentInfo = new GridLayout(6,  3);
+		GridLayout lytEnvironmentInfo = new GridLayout(6,  4);
 		lytEnvironmentInfo.setMargin(true);
 		lytEnvironmentInfo.setSpacing(true);
 		lytEnvironmentInfo.setSizeFull();
@@ -57,36 +52,44 @@ public class MonitoringView extends VerticalLayout {
 		
 		EnvironmentInfo environmentInfo = monitoringService.getEnvironmentInfo();
 		
-		lytEnvironmentInfo.addComponent(new Label("<b>OS Name: </b>", ContentMode.HTML), 0, 0);
-		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getOsName()), 1, 0);
-		lytEnvironmentInfo.addComponent(new Label("<b>OS Version: </b>", ContentMode.HTML), 2, 0);
-		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getOsVersion()), 3, 0);
-		lytEnvironmentInfo.addComponent(new Label("<b>OS Architecture: </b>", ContentMode.HTML), 4, 0);
-		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getOsArch()), 5, 0);
+		final Date startTime = monitoringService.getStartTime();
+		final Label lblPassedTimeValue = new Label();
 		
-		lytEnvironmentInfo.addComponent(new Label("<b>JVM Name: </b>", ContentMode.HTML), 0, 1);
-		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getJvmName()), 1, 1);
-		lytEnvironmentInfo.addComponent(new Label("<b>JVM Version: </b>", ContentMode.HTML), 2, 1);
-		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getJvmVersion()), 3, 1);
-		lytEnvironmentInfo.addComponent(new Label("<b>JVM Vendor: </b>", ContentMode.HTML), 4, 1);
-		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getJvmVendor()), 5, 1);
+		lytEnvironmentInfo.addComponent(new Label("<b>Start Time: </b>", ContentMode.HTML), 0, 0);
+		lytEnvironmentInfo.addComponent(new Label(startTime.toGMTString()), 1, 0);
+		lytEnvironmentInfo.addComponent(new Label("<b>Passed Time: </b>", ContentMode.HTML), 2, 0);
+		lytEnvironmentInfo.addComponent(lblPassedTimeValue, 3, 0);
 		
-		lytEnvironmentInfo.addComponent(new Label("<b>Java Vendor: </b>", ContentMode.HTML), 0, 2);
-		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getJavaVendor()), 1, 2);
-		lytEnvironmentInfo.addComponent(new Label("<b>Java Version: </b>", ContentMode.HTML), 2, 2);
-		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getJavaVersion()), 3, 2);
+		lytEnvironmentInfo.addComponent(new Label("<b>OS Name: </b>", ContentMode.HTML), 0, 1);
+		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getOsName()), 1, 1);
+		lytEnvironmentInfo.addComponent(new Label("<b>OS Version: </b>", ContentMode.HTML), 2, 1);
+		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getOsVersion()), 3, 1);
+		lytEnvironmentInfo.addComponent(new Label("<b>OS Architecture: </b>", ContentMode.HTML), 4, 1);
+		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getOsArch()), 5, 1);
+		
+		lytEnvironmentInfo.addComponent(new Label("<b>JVM Name: </b>", ContentMode.HTML), 0, 2);
+		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getJvmName()), 1, 2);
+		lytEnvironmentInfo.addComponent(new Label("<b>JVM Version: </b>", ContentMode.HTML), 2, 2);
+		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getJvmVersion()), 3, 2);
+		lytEnvironmentInfo.addComponent(new Label("<b>JVM Vendor: </b>", ContentMode.HTML), 4, 2);
+		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getJvmVendor()), 5, 2);
+		
+		lytEnvironmentInfo.addComponent(new Label("<b>Java Vendor: </b>", ContentMode.HTML), 0, 3);
+		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getJavaVendor()), 1, 3);
+		lytEnvironmentInfo.addComponent(new Label("<b>Java Version: </b>", ContentMode.HTML), 2, 3);
+		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getJavaVersion()), 3, 3);
 		/*
-		lytEnvironmentInfo.addComponent(new Label("<b>Java Spec Version: </b>", ContentMode.HTML), 4, 2);
-		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getJavaSpecVersion()), 5, 2);
-		lytEnvironmentInfo.addComponent(new Label("<b>Java Runtime Version: </b>", ContentMode.HTML), 6, 2);
-		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getJavaRuntimeVersion()), 7, 2);
+		lytEnvironmentInfo.addComponent(new Label("<b>Java Spec Version: </b>", ContentMode.HTML), 4, 3);
+		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getJavaSpecVersion()), 5, 3);
+		lytEnvironmentInfo.addComponent(new Label("<b>Java Runtime Version: </b>", ContentMode.HTML), 6, 3);
+		lytEnvironmentInfo.addComponent(new Label(environmentInfo.getJavaRuntimeVersion()), 7, 3);
 		*/
 		
 		pnlEnvironmentInfo.setContent(lytEnvironmentInfo);
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
 		
-		pnlMemoryStats = new Panel();
+		Panel pnlMemoryStats = new Panel();
 		pnlMemoryStats.setCaption("Memory Stats");
 		pnlMemoryStats.addStyleName(Reindeer.LAYOUT_BLUE);
 		pnlMemoryStats.setWidth("100%");
@@ -147,7 +150,7 @@ public class MonitoringView extends VerticalLayout {
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
 		
-		pnlGCStats = new Panel();
+		Panel pnlGCStats = new Panel();
 		pnlGCStats.setCaption("GC Stats");
 		pnlGCStats.addStyleName(Reindeer.LAYOUT_BLUE);
 		pnlGCStats.setWidth("100%");
@@ -188,7 +191,7 @@ public class MonitoringView extends VerticalLayout {
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
 		
-		pnlPersonStats = new Panel();
+		Panel pnlPersonStats = new Panel();
 		pnlPersonStats.setCaption("Person Stats");
 		pnlPersonStats.addStyleName(Reindeer.LAYOUT_BLUE);
 		pnlPersonStats.setWidth("100%");
@@ -236,11 +239,27 @@ public class MonitoringView extends VerticalLayout {
 		setSpacing(false);
 		setSizeFull();
 		
+		final int MILLISECONDS_IN_A_MINUTE = 60 * 1000;
+		final int MILLISECONDS_IN_A_HOUR = 60 * MILLISECONDS_IN_A_MINUTE;
+		final int MILLISECONDS_IN_A_DAY = 24 * MILLISECONDS_IN_A_HOUR;
+		
 		monitoringRefresherTimer = new Timer();
 		monitoringRefresherTimer.schedule(
 				new TimerTask() {
 					@Override
 					public void run() {
+						long passedMilis = System.currentTimeMillis() - startTime.getTime();
+						int passedDays = (int) (passedMilis / MILLISECONDS_IN_A_DAY);
+						int passedHours = (int) ((passedMilis - (passedDays * MILLISECONDS_IN_A_DAY)) 
+												/ MILLISECONDS_IN_A_HOUR);
+						int passedMinutes = (int) ((passedMilis - ((passedDays * MILLISECONDS_IN_A_DAY) 
+																   + (passedHours * MILLISECONDS_IN_A_HOUR))) 
+												  / MILLISECONDS_IN_A_MINUTE);
+						
+						lblPassedTimeValue.setValue(String.valueOf(
+								passedDays + " day(s) " + 
+								passedHours + " hour(s) " + 
+								passedMinutes + " min(s)")); 
 						lblTotalPhysicalMemory.
 								setValue(String.valueOf(memoryStats.getTotalPhysicalMemory() / (1024 * 1024)));
 						lblFreePhysicalMemory.

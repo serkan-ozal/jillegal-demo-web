@@ -28,9 +28,12 @@ public class PersonServiceImpl implements PersonService {
 
 	private static final Logger logger = Logger.getLogger(PersonServiceImpl.class);
 	
-	private static final int SAVE_COUNT_IN_A_SCHEDULE = 1000;
-	private static final int REMOVE_COUNT_IN_A_SCHEDULE = 10;
-	private static final int GET_COUNT_IN_A_SCHEDULE = 1000;
+	private static final int SAVE_COUNT_IN_A_SCHEDULE = 
+			Integer.getInteger("jillegal.demo.web.saveCountInASchedule", 1000);
+	private static final int REMOVE_COUNT_IN_A_SCHEDULE = 
+			Integer.getInteger("jillegal.demo.web.removeCountInASchedule", 10);
+	private static final int GET_COUNT_IN_A_SCHEDULE = 
+			Integer.getInteger("jillegal.demo.web.getCountInASchedule", 1000);
 	
 	private static final Random RANDOM = new Random();
 	private static volatile boolean initiallyLoaded = false;
@@ -217,6 +220,23 @@ public class PersonServiceImpl implements PersonService {
 		return person;
 	}
 	
+	//@Scheduled(initialDelay = 60 * 1000, fixedRate = 1000)
+	public synchronized void process() {
+		for (int i = 0; i < SAVE_COUNT_IN_A_SCHEDULE; i++) {
+			int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
+			Person person = randomizePerson(id, newPerson());
+			saveInternal(person, false);
+		}	
+		for (int i = 0; i < REMOVE_COUNT_IN_A_SCHEDULE; i++) {
+			int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
+			remove(id);
+		}	
+		for (int i = 0; i < GET_COUNT_IN_A_SCHEDULE; i++) {
+			int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
+			get(id);
+		}
+	}
+	
 	@Scheduled(initialDelay = 60 * 1000, fixedRate = 100)
 	public void saveRandomPerson() {
 		for (int i = 0; i < SAVE_COUNT_IN_A_SCHEDULE; i++) {
@@ -282,23 +302,28 @@ public class PersonServiceImpl implements PersonService {
 		
 		Person oldPerson = personDAO.save(person);
 		if (oldPerson != null) {
+			String username = oldPerson.getUsername();
+			String firstName = oldPerson.getFirstName();
+			String lastName = oldPerson.getLastName();
+			
+			offHeapService.freeObject(oldPerson);
+			
 			if (checksEnable) {
-				if (oldPerson.getUsername() != person.getUsername()) {
-					offHeapService.freeString(oldPerson.getUsername());
+				if (username != person.getUsername()) {
+					offHeapService.freeString(username);
 				}
-				if (oldPerson.getFirstName() != person.getFirstName()) {
-					offHeapService.freeString(oldPerson.getFirstName());
+				if (firstName != person.getFirstName()) {
+					offHeapService.freeString(firstName);
 				}
-				if (oldPerson.getLastName() != person.getLastName()) {
-					offHeapService.freeString(oldPerson.getLastName());
+				if (lastName != person.getLastName()) {
+					offHeapService.freeString(lastName);
 				}
 			}
 			else {
-				offHeapService.freeString(oldPerson.getUsername());
-				offHeapService.freeString(oldPerson.getFirstName());
-				offHeapService.freeString(oldPerson.getLastName());
+				offHeapService.freeString(username);
+				offHeapService.freeString(firstName);
+				offHeapService.freeString(lastName);
 			}
-			offHeapService.freeObject(oldPerson);
 		}
 		
 		personStats.increasePut();
@@ -308,10 +333,14 @@ public class PersonServiceImpl implements PersonService {
 	public boolean remove(long id) {
 		Person removedPerson = personDAO.remove(id);
 		if (removedPerson != null) {
-			offHeapService.freeString(removedPerson.getUsername());
-			offHeapService.freeString(removedPerson.getFirstName());
-			offHeapService.freeString(removedPerson.getLastName());
+			String username = removedPerson.getUsername();
+			String firstName = removedPerson.getFirstName();
+			String lastName = removedPerson.getLastName();
+			
 			offHeapService.freeObject(removedPerson);
+			offHeapService.freeString(username);
+			offHeapService.freeString(firstName);
+			offHeapService.freeString(lastName);
 			
 			personStats.increaseRemoved();
 			
