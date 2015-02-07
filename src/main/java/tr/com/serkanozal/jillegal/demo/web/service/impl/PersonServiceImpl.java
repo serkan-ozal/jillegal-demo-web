@@ -34,6 +34,8 @@ public class PersonServiceImpl implements PersonService {
 			Integer.getInteger("jillegal.demo.web.removeCountInASchedule", 10);
 	private static final int GET_COUNT_IN_A_SCHEDULE = 
 			Integer.getInteger("jillegal.demo.web.getCountInASchedule", 1000);
+	private static final boolean IGNORE_STRINGS = 
+			Boolean.getBoolean("jillegal.demo.web.ignoreStrings");
 	
 	private static final Random RANDOM = new Random();
 	private static volatile boolean initiallyLoaded = false;
@@ -182,7 +184,7 @@ public class PersonServiceImpl implements PersonService {
 	
 	@PostConstruct
 	private void init() {
-		doInitialLoad();
+		startProcess(); 
 	}
 	
 	private synchronized void doInitialLoad() {
@@ -201,15 +203,17 @@ public class PersonServiceImpl implements PersonService {
 	
 	private Person randomizePerson(int key, Person person) {
 		person.setId(key);
-		CharArray usernameCharArray = USERNAME_CHAR_ARRAY_BUFFER.getFor(key);
-		person.setUsername(offHeapService.newString(usernameCharArray.chars, 0, usernameCharArray.actualLength));
-		//person.setUsername(offHeapService.newString("Username-" + key));
-		CharArray firstNameCharArray = FIRSTNAME_CHAR_ARRAY_BUFFER.getFor(key);
-		person.setFirstName(offHeapService.newString(firstNameCharArray.chars, 0, firstNameCharArray.actualLength));
-		//person.setFirstName(offHeapService.newString("Firstname-" + key));
-		CharArray lastNameCharArray = LASTNAME_CHAR_ARRAY_BUFFER.getFor(key);
-		person.setLastName(offHeapService.newString(lastNameCharArray.chars, 0, lastNameCharArray.actualLength));
-		//person.setLastName(offHeapService.newString("Lastname-" + key));
+		if (!IGNORE_STRINGS) {
+			CharArray usernameCharArray = USERNAME_CHAR_ARRAY_BUFFER.getFor(key);
+			person.setUsername(offHeapService.newString(usernameCharArray.chars, 0, usernameCharArray.actualLength));
+			//person.setUsername(offHeapService.newString("Username-" + key));
+			CharArray firstNameCharArray = FIRSTNAME_CHAR_ARRAY_BUFFER.getFor(key);
+			person.setFirstName(offHeapService.newString(firstNameCharArray.chars, 0, firstNameCharArray.actualLength));
+			//person.setFirstName(offHeapService.newString("Firstname-" + key));
+			CharArray lastNameCharArray = LASTNAME_CHAR_ARRAY_BUFFER.getFor(key);
+			person.setLastName(offHeapService.newString(lastNameCharArray.chars, 0, lastNameCharArray.actualLength));
+			//person.setLastName(offHeapService.newString("Lastname-" + key));
+		}	
 		person.setBirthDate(
 				(Person.MILLI_SECONDS_IN_A_YEAR * RANDOM.nextInt(30)) + 	// Any year between 1970 and 2000
 				(Person.MILLI_SECONDS_IN_A_MONTH * (RANDOM.nextInt(12))) +	// Any month between 0 and 11 (Jan and Dec)
@@ -218,6 +222,36 @@ public class PersonServiceImpl implements PersonService {
 		person.setDebt(RANDOM.nextInt(1000));
 		
 		return person;
+	}
+	
+	private void startProcess() {
+		new Thread() {
+			public void run() {
+				doInitialLoad();
+				
+				while (true) {
+					try {
+						for (int i = 0; i < SAVE_COUNT_IN_A_SCHEDULE; i++) {
+							int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
+							Person person = randomizePerson(id, newPerson());
+							saveInternal(person, false);
+						}	
+						for (int i = 0; i < REMOVE_COUNT_IN_A_SCHEDULE; i++) {
+							int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
+							remove(id);
+						}	
+						for (int i = 0; i < GET_COUNT_IN_A_SCHEDULE; i++) {
+							int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
+							get(id);
+						}
+						Thread.sleep(1000);
+					} 
+					catch (Throwable t) {
+						t.printStackTrace();
+					}
+				}
+			};
+		}.start();
 	}
 	
 	//@Scheduled(initialDelay = 60 * 1000, fixedRate = 1000)
@@ -237,7 +271,7 @@ public class PersonServiceImpl implements PersonService {
 		}
 	}
 	
-	@Scheduled(initialDelay = 60 * 1000, fixedRate = 100)
+	//@Scheduled(initialDelay = 60 * 1000, fixedRate = 100)
 	public void saveRandomPerson() {
 		for (int i = 0; i < SAVE_COUNT_IN_A_SCHEDULE; i++) {
 			int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
@@ -246,7 +280,7 @@ public class PersonServiceImpl implements PersonService {
 		}	
 	}
 	
-	@Scheduled(initialDelay = 60 * 1000, fixedRate = 100)
+	//@Scheduled(initialDelay = 60 * 1000, fixedRate = 100)
 	public void removeRandomPerson() {
 		for (int i = 0; i < REMOVE_COUNT_IN_A_SCHEDULE; i++) {
 			int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
@@ -254,7 +288,7 @@ public class PersonServiceImpl implements PersonService {
 		}	
 	}
 	
-	@Scheduled(initialDelay = 60 * 1000, fixedRate = 100)
+	//@Scheduled(initialDelay = 60 * 1000, fixedRate = 100)
 	public void getRandomPerson() {
 		for (int i = 0; i < GET_COUNT_IN_A_SCHEDULE; i++) {
 			int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
@@ -288,42 +322,52 @@ public class PersonServiceImpl implements PersonService {
 			throw new IllegalArgumentException("ID can be between 0 and " + Person.MAX_PERSON_COUNT);
 		}
 		
-		if (checksEnable) {
-			if (!offHeapService.isInOffHeap(person.getUsername())) {
-				person.setUsername(offHeapService.newString(person.getUsername()));
-			}
-			if (!offHeapService.isInOffHeap(person.getFirstName())) {
-				person.setFirstName(offHeapService.newString(person.getFirstName()));
-			}
-			if (!offHeapService.isInOffHeap(person.getLastName())) {
-				person.setLastName(offHeapService.newString(person.getLastName()));
+		if (!IGNORE_STRINGS) {
+			if (checksEnable) {
+				if (!offHeapService.isInOffHeap(person.getUsername())) {
+					person.setUsername(offHeapService.newString(person.getUsername()));
+				}
+				if (!offHeapService.isInOffHeap(person.getFirstName())) {
+					person.setFirstName(offHeapService.newString(person.getFirstName()));
+				}
+				if (!offHeapService.isInOffHeap(person.getLastName())) {
+					person.setLastName(offHeapService.newString(person.getLastName()));
+				}
 			}
 		}
 		
 		Person oldPerson = personDAO.save(person);
 		if (oldPerson != null) {
-			String username = oldPerson.getUsername();
-			String firstName = oldPerson.getFirstName();
-			String lastName = oldPerson.getLastName();
+			String username = null;
+			String firstName = null;
+			String lastName = null;
+			
+			if (!IGNORE_STRINGS) {
+				username = oldPerson.getUsername();
+				firstName = oldPerson.getFirstName();
+				lastName = oldPerson.getLastName();
+			}
 			
 			offHeapService.freeObject(oldPerson);
 			
-			if (checksEnable) {
-				if (username != person.getUsername()) {
+			if (!IGNORE_STRINGS) {
+				if (checksEnable) {
+					if (username != person.getUsername()) {
+						offHeapService.freeString(username);
+					}
+					if (firstName != person.getFirstName()) {
+						offHeapService.freeString(firstName);
+					}
+					if (lastName != person.getLastName()) {
+						offHeapService.freeString(lastName);
+					}
+				}
+				else {
 					offHeapService.freeString(username);
-				}
-				if (firstName != person.getFirstName()) {
 					offHeapService.freeString(firstName);
-				}
-				if (lastName != person.getLastName()) {
 					offHeapService.freeString(lastName);
 				}
-			}
-			else {
-				offHeapService.freeString(username);
-				offHeapService.freeString(firstName);
-				offHeapService.freeString(lastName);
-			}
+			}	
 		}
 		
 		personStats.increasePut();
@@ -333,14 +377,23 @@ public class PersonServiceImpl implements PersonService {
 	public boolean remove(long id) {
 		Person removedPerson = personDAO.remove(id);
 		if (removedPerson != null) {
-			String username = removedPerson.getUsername();
-			String firstName = removedPerson.getFirstName();
-			String lastName = removedPerson.getLastName();
+			String username = null;
+			String firstName = null;
+			String lastName = null;
+			
+			if (!IGNORE_STRINGS) {
+				username = removedPerson.getUsername();
+				firstName = removedPerson.getFirstName();
+				lastName = removedPerson.getLastName();
+			}
 			
 			offHeapService.freeObject(removedPerson);
-			offHeapService.freeString(username);
-			offHeapService.freeString(firstName);
-			offHeapService.freeString(lastName);
+			
+			if (!IGNORE_STRINGS) {
+				offHeapService.freeString(username);
+				offHeapService.freeString(firstName);
+				offHeapService.freeString(lastName);
+			}
 			
 			personStats.increaseRemoved();
 			

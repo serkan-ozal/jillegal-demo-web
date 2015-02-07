@@ -34,6 +34,8 @@ import tr.com.serkanozal.jillegal.util.JvmUtil;
 public class MonitoringServiceImpl implements MonitoringService {
 
 	private static final Logger logger = Logger.getLogger(MonitoringServiceImpl.class);
+	private static final boolean DISABLE_MONITORING_LOGS = 
+			Boolean.getBoolean("jillegal.demo.web.disableMonitoringLogs");
 	
 	private static final Runtime RUNTIME = Runtime.getRuntime();
 	private static final OperatingSystemMXBean OPERATING_SYSTEM_MX_BEAN = 
@@ -215,9 +217,11 @@ public class MonitoringServiceImpl implements MonitoringService {
 	
 	@Scheduled(initialDelay = 1000, fixedRate = 1000)
 	private void logMonitoringInformations() {
-		logger.info(memoryStats);
-		logger.info(gcStats);
-		logger.info(getPersonStats());
+		if (!DISABLE_MONITORING_LOGS) {
+			logger.info(memoryStats);
+			logger.info(gcStats);
+			logger.info(getPersonStats());
+		}	
 	}
 	
 }
