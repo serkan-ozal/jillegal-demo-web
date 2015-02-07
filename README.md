@@ -6,7 +6,8 @@ Jillegal Demo Web Application
 HOW TO INSTALL
 --------------
 
-1. Open a EC2 instance. 
+* Open a EC2 instance. 
+
 ```
 	On Demand Instance:
 		Type		vCPU	ECU		Memory (GiB)	Instance Storage (GB)	Linux/UNIX Usage
@@ -27,13 +28,13 @@ HOW TO INSTALL
 		r3.8xlarge		$0.2567 per Hour	$0.9561 per Hour
 ```
 
-2. Connect to instance over SSH with `jillegal-demo-web.pem` PEM file.
+* Connect to instance over SSH with `jillegal-demo-web.pem` PEM file.
 
 	`ssh -i ~/.ssh/jillegal-demo-web.pem <username>@<instance_public_dns_name>` 
 	For example: 
 		`http://ec2-12-34-567-89.compute-1.amazonaws.com:8080/jillegal-demo-web/`
 		
-3. Install **"JDK 8"**.
+* Install **"JDK 8"**.
 
 ```
 sudo add-apt-repository ppa:webupd8team/java
@@ -41,26 +42,26 @@ sudo apt-get update
 sudo apt-get install oracle-java8-installer
 ```
 
-4. Install **"Git"**.
+* Install **"Git"**.
 
 ```
 sudo apt-get install git
 ```
 
-5. Install **"Maven"**. 
+* Install **"Maven"**. 
 
 ```
 sudo apt-get install maven
 ```
 
-6. Set environment variables.
+* Set environment variables.
 
 ```
 export JAVA_HOME=/usr/lib/jvm/java-8-oracle
 export JAVA8_HOME=$JAVA_HOME
 ```
 
-7. Clone and build Jillegal.
+* Clone and build Jillegal.
 
 ```	
 git clone https://github.com/serkan-ozal/jillegal.git
@@ -68,7 +69,7 @@ cd jillegal
 mvn clean install -DskipTests=true
 ```
 
-8. Clone and build Jillegal-Demo-Web
+* Clone and build Jillegal-Demo-Web
 
 ```
 git clone https://github.com/serkan-ozal/jillegal-demo-web.git
@@ -76,7 +77,7 @@ cd jillegal-demo-web
 mvn clean install -DskipTests=true	
 ```
 
-9. Set Maven arguments to run sample web application uses Jillegal
+* Set Maven arguments to run sample web application uses Jillegal
 
 	Requiered:
 ```
@@ -88,10 +89,11 @@ export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -verbose:gc -X
 export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -verbose:gc -XX:+PrintGCDetails -Xms2g -Xmx4g -XX:+StartAttachListener -Djillegal.demo.web.maxPersonCount=20000000 -Djillegal.offheap.pool.objectCount=20480 -Djillegal.offheap.pool.estimatedStringCount=20480 -Djillegal.offheap.memory.useBatchMemoryAllocatorOn64BitJVM=true"
 ```
   
-10. Run web application and connect to it
+* Run web application and connect to it
+
 ```
 	mvn jetty:run
-```	
-	
-	Go to url `<instance_public_dns_name>:8080/jillegal-demo-web/`
+```
+
+Go to url `<instance_public_dns_name>:8080/jillegal-demo-web/`
 
