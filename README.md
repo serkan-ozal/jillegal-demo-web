@@ -30,7 +30,9 @@ HOW TO INSTALL
 
 * Connect to instance over SSH with `jillegal-demo-web.pem` PEM file.
 
-	`ssh -i ~/.ssh/jillegal-demo-web.pem <username>@<instance_public_dns_name>` 
+```
+ssh -i ~/.ssh/jillegal-demo-web.pem <username>@<instance_public_dns_name>
+``` 
 	
 	For example: 
 		`http://ec2-12-34-567-89.compute-1.amazonaws.com:8080/jillegal-demo-web/`
@@ -93,7 +95,7 @@ export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -verbose:gc -X
 * Run web application and connect to it
 
 ```
-	mvn jetty:run
+mvn jetty:run
 ```
 
 Go to url `<instance_public_dns_name>:8080/jillegal-demo-web/`
