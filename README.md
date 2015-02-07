@@ -96,5 +96,5 @@ export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -verbose:gc -X
 	mvn jetty:run
 ```
 
-Go to url `<instance_public_dns_name>:8080/jillegal-demo-web/`
+	Go to url `<instance_public_dns_name>:8080/jillegal-demo-web/`
 
