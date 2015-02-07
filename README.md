@@ -83,7 +83,7 @@ mvn clean install
 
 **Requiered Configuration**:
 ```
-export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -verbose:gc -XX:+PrintGCDetails -Xms2g -Xmx4g -XX:+StartAttachListener" 
+export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+StartAttachListener" 
 ```
   
 **Example Configuration**:
