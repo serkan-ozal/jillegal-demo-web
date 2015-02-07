@@ -31,6 +31,7 @@ HOW TO INSTALL
 * Connect to instance over SSH with `jillegal-demo-web.pem` PEM file.
 
 	`ssh -i ~/.ssh/jillegal-demo-web.pem <username>@<instance_public_dns_name>` 
+	
 	For example: 
 		`http://ec2-12-34-567-89.compute-1.amazonaws.com:8080/jillegal-demo-web/`
 		
