@@ -25,7 +25,6 @@ public class OffHeapPersonDAO implements PersonDAO {
 	
 	private static final OffHeapService offHeapService = OffHeapServiceFactory.getOffHeapService();
 	
-	private final Map<Long, Person> personOffHeapMap = new OffHeapJudyHashMap<Long, Person>(Long.class, Person.class);
 	private final Map<Long, Person> personMap = 
 			DISABLE ? new ConcurrentHashMap<Long, Person>() 
 					: new OffHeapJudyHashMap<Long, Person>(Long.class, Person.class);

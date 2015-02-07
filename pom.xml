@@ -10,26 +10,17 @@
      
   	<properties>
         
-        <aws.accessKey></aws.accessKey>
-		<aws.secretKey></aws.secretKey>
-		
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         
         <source.compiler.version>1.8</source.compiler.version>
         <target.compiler.version>1.8</target.compiler.version>
-        
-        <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
         
         <maven.compiler.plugin.version>2.3.2</maven.compiler.plugin.version>
         <maven.resources.plugin.version>2.4</maven.resources.plugin.version>
         <maven.vaadin.plugin.version>${vaadin.version}</maven.vaadin.plugin.version>
         <maven.jetty.plugin.version>8.1.0.RC5</maven.jetty.plugin.version>
 		<maven.tomcat.plugin.version>2.2</maven.tomcat.plugin.version>
-        <maven.beanstalk.plugin.version>1.0.1</maven.beanstalk.plugin.version>
-        
-        <beanstalk.versionLabel>${version}</beanstalk.versionLabel>
-    	<beanstalk.skipIfSameVersion>false</beanstalk.skipIfSameVersion>
-		
+
 		<jillegal.version>3.0-SNAPSHOT</jillegal.version> 
 		<vaadin.version>7.1.8</vaadin.version>
 		<vaadin.plugin.version>7.1.8</vaadin.plugin.version>
@@ -76,7 +67,7 @@
 					<systemProperties>
 						<systemProperty>
 							<name>MAVEN_OPTS</name>
-							<value>-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -verbose:gc -Xms1024m -Xmx2048m</value>
+							<value>-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -verbose:gc -XX:+PrintGCDetails -Xms1g -Xmx2g -XX:+StartAttachListener</value>
 						</systemProperty>
 					</systemProperties>
 				</configuration>
@@ -92,125 +83,6 @@
                 </configuration>
             </plugin>
             -->
-            <plugin>
-      			<groupId>br.com.ingenieux</groupId>
-      			<artifactId>beanstalk-maven-plugin</artifactId>
-      			<version>${maven.beanstalk.plugin.version}</version>
-      			<configuration>
-      				<applicationName>jillegal-demo-web</applicationName>
-      				<environmentName>${project.build.finalName}-env</environmentName>
-      				<cnamePrefix>${project.build.finalName}</cnamePrefix>
-          			<s3Bucket>jillegal-demo-web</s3Bucket>
-          			<s3Key>${project.artifactId}/${project.build.finalName}-${version}.war</s3Key>
-          			<!-- http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html -->
-          			<solutionStack>64bit Amazon Linux 2014.09 v1.0.0 running Tomcat 8 Java 8</solutionStack>
-          			
-          			<!-- https://github.com/ingenieux/beanstalker/blob/master/beanstalk-maven-plugin/src/site/apt/configurations-and-templates.apt --> 
-          			<optionSettings>
-          				<!-- 
-          				On Demand Instance:
-          					Type		vCPU	ECU		Memory (GiB)	Instance Storage (GB)	Linux/UNIX Usage
-          					====================================================================================
-	          				r3.large	2		6.5		15				1 x 32 SSD				$0.175 per Hour
-							r3.xlarge	4		13		30.5			1 x 80 SSD				$0.350 per Hour
-							r3.2xlarge	8		26		61				1 x 160 SSD				$0.700 per Hour
-							r3.4xlarge	16		52		122				1 x 320 SSD				$1.400 per Hour
-							r3.8xlarge	32		104		244				2 x 320 SSD				$2.800 per Hour
-							
-						Spot Instance:
-							Type			Linux/UNIX Usage	Windows Usage
-							====================================================
-							r3.large		$0.0161 per Hour	$0.1741 per Hour
-							r3.xlarge		$0.0322 per Hour	$0.2821 per Hour
-							r3.2xlarge		$0.0641 per Hour	$0.4441 per Hour
-							r3.4xlarge		$0.1284 per Hour	$0.6721 per Hour
-							r3.8xlarge		$0.2567 per Hour	$0.9561 per Hour
-          				-->
-          				<optionSetting>
-							<namespace>aws:autoscaling:launchconfiguration</namespace>
-							<optionName>InstanceType</optionName>
-							<value>r3.large</value>
-						</optionSetting>
-						<optionSetting>
-							<namespace>aws:elasticbeanstalk:environment</namespace>
-							<optionName>EnvironmentType</optionName>
-							<value>SingleInstance</value>
-						</optionSetting>
-						<optionSetting>
-							<namespace>aws:elasticbeanstalk:container:tomcat:jvmoptions</namespace>
-							<optionName>Xms</optionName>
-							<value>1024m</value>
-						</optionSetting>
-						<optionSetting>
-							<namespace>aws:elasticbeanstalk:container:tomcat:jvmoptions</namespace>
-							<optionName>Xmx</optionName>
-							<value>2048m</value>
-						</optionSetting>
-						<optionSetting>
-							<namespace>aws:elasticbeanstalk:container:tomcat:jvmoptions</namespace>
-							<optionName>XX:MaxPermSize</optionName>
-							<value>512m</value>
-						</optionSetting>
-						<optionSetting>
-							<namespace>aws:elasticbeanstalk:container:tomcat:jvmoptions</namespace>
-							<optionName>XX:-UseCompressedOops</optionName>
-							<value></value>
-						</optionSetting>
-						<optionSetting>
-							<namespace>aws:elasticbeanstalk:container:tomcat:jvmoptions</namespace>
-							<optionName>XX:+UseConcMarkSweepGC</optionName>
-							<value></value>
-						</optionSetting>
-						<optionSetting>
-							<namespace>aws:elasticbeanstalk:container:tomcat:jvmoptions</namespace>
-							<optionName>XX:+PrintGCDetails</optionName>
-							<value></value>
-						</optionSetting>
-						<optionSetting>
-							<namespace>aws:elasticbeanstalk:container:tomcat:jvmoptions</namespace>
-							<optionName>XX:+StartAttachListener</optionName>
-							<value></value>
-						</optionSetting>
-						<optionSetting>
-							<namespace>aws:elasticbeanstalk:container:tomcat:jvmoptions</namespace>
-							<optionName>verbose:gc</optionName>
-							<value></value>
-						</optionSetting>
-						<optionSetting>
-							<namespace>aws:autoscaling:launchconfiguration</namespace>
-							<optionName>EC2KeyName</optionName>
-							<value>jillegal-demo-web</value>
-						</optionSetting>
-						<!--  
-						<optionSetting>
-							<namespace>aws:elasticbeanstalk:application:environment</namespace>
-							<optionName>jillegal.offheap.pool.objectCount</optionName>
-							<value>1048576</value>
-						</optionSetting>
-						<optionSetting>
-							<namespace>aws:elasticbeanstalk:application:environment</namespace>
-							<optionName>jillegal.offheap.pool.estimatedStringCount</optionName>
-							<value>1048576</value>
-						</optionSetting>
-						-->
-						<optionSetting>
-							<namespace>aws:elasticbeanstalk:application:environment</namespace>
-							<optionName>jillegal.demo.web.maxPersonCount</optionName>
-							<value>10000000</value>
-						</optionSetting>
-          			</optionSettings>
-          			<!-- will save as s3://[bucket name]/[artifactId]/artifactId-version.war -->
-          			<!-- mvn beanstalk:check-availability -Dbeanstalk.cnamePrefix=jillegal-demo-web -->
-          			<!-- mvn beanstalk:upload-source-bundle -->
-          			<!-- mvn beanstalk:upload-source-bundle beanstalk:create-application-version beanstalk:create-environment -->
-          			<!-- mvn beanstalk:upload-source-bundle beanstalk:create-application-version beanstalk:update-environment -->
-          			<!-- mvn beanstalk:upload-source-bundle beanstalk:create-application-version beanstalk:replace-environment -->
-          			<!-- mvn beanstalk:rollback-version -->
-          			<!-- mvn beanstalk:clean-previous-versions -Dbeanstalk.versionsToKeep=1 -->
-          			<!-- mvn beanstalk:terminate-environment -->
-          			<!-- mvn beanstalk:describe-environments -->
-        		</configuration>
-    		</plugin>
 	        <!--  
 			<plugin>
 				<groupId>com.vaadin</groupId>

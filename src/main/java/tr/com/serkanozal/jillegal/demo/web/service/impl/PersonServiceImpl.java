@@ -36,6 +36,8 @@ public class PersonServiceImpl implements PersonService {
 			Integer.getInteger("jillegal.demo.web.getCountInASchedule", 1000);
 	private static final boolean IGNORE_STRINGS = 
 			Boolean.getBoolean("jillegal.demo.web.ignoreStrings");
+	private static final boolean USE_SCHEDULED_TASK = 
+			Boolean.getBoolean("jillegal.demo.web.useScheduledTask");
 	
 	private static final Random RANDOM = new Random();
 	private static volatile boolean initiallyLoaded = false;
@@ -184,7 +186,10 @@ public class PersonServiceImpl implements PersonService {
 	
 	@PostConstruct
 	private void init() {
-		startProcess(); 
+		doInitialLoad();
+		if (!USE_SCHEDULED_TASK) {
+			runProcess(); 
+		}	
 	}
 	
 	private synchronized void doInitialLoad() {
@@ -224,11 +229,9 @@ public class PersonServiceImpl implements PersonService {
 		return person;
 	}
 	
-	private void startProcess() {
+	private void runProcess() {
 		new Thread() {
 			public void run() {
-				doInitialLoad();
-				
 				while (true) {
 					try {
 						for (int i = 0; i < SAVE_COUNT_IN_A_SCHEDULE; i++) {
@@ -254,21 +257,23 @@ public class PersonServiceImpl implements PersonService {
 		}.start();
 	}
 	
-	//@Scheduled(initialDelay = 60 * 1000, fixedRate = 1000)
+	@Scheduled(initialDelay = 60 * 1000, fixedRate = 1000)
 	public synchronized void process() {
-		for (int i = 0; i < SAVE_COUNT_IN_A_SCHEDULE; i++) {
-			int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
-			Person person = randomizePerson(id, newPerson());
-			saveInternal(person, false);
+		if (USE_SCHEDULED_TASK) {
+			for (int i = 0; i < SAVE_COUNT_IN_A_SCHEDULE; i++) {
+				int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
+				Person person = randomizePerson(id, newPerson());
+				saveInternal(person, false);
+			}	
+			for (int i = 0; i < REMOVE_COUNT_IN_A_SCHEDULE; i++) {
+				int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
+				remove(id);
+			}	
+			for (int i = 0; i < GET_COUNT_IN_A_SCHEDULE; i++) {
+				int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
+				get(id);
+			}
 		}	
-		for (int i = 0; i < REMOVE_COUNT_IN_A_SCHEDULE; i++) {
-			int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
-			remove(id);
-		}	
-		for (int i = 0; i < GET_COUNT_IN_A_SCHEDULE; i++) {
-			int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
-			get(id);
-		}
 	}
 	
 	//@Scheduled(initialDelay = 60 * 1000, fixedRate = 100)
