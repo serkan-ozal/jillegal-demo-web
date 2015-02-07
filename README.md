@@ -76,7 +76,7 @@ mvn clean install -DskipTests=true
 ```
 git clone https://github.com/serkan-ozal/jillegal-demo-web.git
 cd jillegal-demo-web
-mvn clean install -DskipTests=true	
+mvn clean install	
 ```
 
 * Set Maven arguments to run sample web application uses Jillegal
