@@ -99,3 +99,32 @@ mvn jetty:run
 
 Go to url `<instance_public_dns_name>:8080/jillegal-demo-web/`
 
+CONFIGURATIONS
+--------------
+
+* **`jillegal.offheap.memory.useBatchMemoryAllocatorOn64BitJVM`:**
+
+* **`jillegal.offheap.pool.objectCount`:**
+
+* **`jillegal.offheap.pool.estimatedStringCount`:**
+
+* **`jillegal.offheap.pool.estimatedStringLength`:**
+
+* **`jillegal.demo.web.disableMonitoringLogs`:**
+
+* **`jillegal.demo.web.disableOffHeapStorage`:**
+
+* **`jillegal.demo.web.maxPersonCount`:**
+
+* **`jillegal.demo.web.saveCountInASchedule`:** 
+
+* **`jillegal.demo.web.removeCountInASchedule`:**
+
+* **`jillegal.demo.web.getCountInASchedule`:**
+
+* **`jillegal.demo.web.ignoreStrings`:**
+
+* **`jillegal.demo.web.useScheduledTask`:**
+
+
+
