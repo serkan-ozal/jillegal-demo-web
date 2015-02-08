@@ -102,6 +102,7 @@ mvn jetty:run
 ```
 
 For local access, go to url `localhost:8080/jillegal-demo-web/`
+
 For remote access, go to url `<instance_public_dns_name>:8080/jillegal-demo-web/`
 
 CONFIGURATIONS
