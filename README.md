@@ -82,11 +82,13 @@ mvn clean install
 * Set Maven arguments to run sample web application uses Jillegal
 
 **Requiered Configuration**:
+
 ```
 export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+StartAttachListener" 
 ```
   
 **Example Configuration**:
+
 ```
 export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -verbose:gc -XX:+PrintGCDetails -Xms2g -Xmx4g -XX:+StartAttachListener -Djillegal.demo.web.maxPersonCount=20000000 -Djillegal.offheap.pool.objectCount=20480 -Djillegal.offheap.pool.estimatedStringCount=20480 -Djillegal.offheap.memory.useBatchMemoryAllocatorOn64BitJVM=true"
 ```
@@ -97,34 +99,33 @@ export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -verbose:gc -X
 mvn jetty:run
 ```
 
-Go to url `<instance_public_dns_name>:8080/jillegal-demo-web/`
+For local access, go to url `localhost:8080/jillegal-demo-web/`
+For remote access, go to url `<instance_public_dns_name>:8080/jillegal-demo-web/`
 
 CONFIGURATIONS
 --------------
 
-* **`jillegal.offheap.memory.useBatchMemoryAllocatorOn64BitJVM`:**
+* **`jillegal.offheap.memory.useBatchMemoryAllocatorOn64BitJVM`:** By this configuration, on 64 bit JVM, memory segments are allocated as 2GB sized segments and assigned to callers as the requested size. Default value is `false`.
 
-* **`jillegal.offheap.pool.objectCount`:**
+* **`jillegal.offheap.pool.objectCount`:** Defines how much memory will be allocated for how many object while creating a single object pool. Default value is `1024`.
 
-* **`jillegal.offheap.pool.estimatedStringCount`:**
+* **`jillegal.offheap.pool.estimatedStringCount`:** Defines how much memory will be allocated for how many string while creating a single string pool. Default value is `1024`.
 
-* **`jillegal.offheap.pool.estimatedStringLength`:**
+* **`jillegal.offheap.pool.estimatedStringLength`:** Defines avarage size of string (including object header) object in string pool. This estimated length is used for calculating allocaton size in string pool. Default value is `32`.
 
-* **`jillegal.demo.web.disableMonitoringLogs`:**
+* **`jillegal.demo.web.disableMonitoringLogs`:** Disables printing monitoring logs to console. Default value is `false`.
 
-* **`jillegal.demo.web.disableOffHeapStorage`:**
+* **`jillegal.demo.web.disableOffHeapStorage`:** Disables off-heap storage in off-heap based map and uses normal JDK **ConcurrentHashMap**. But the objects are still off-heap objects. So in case of off-heap storage disabled mode, heap objects (ConcurrentHashMap's entries) points to off-heap objects. Default value is `false`.
 
-* **`jillegal.demo.web.maxPersonCount`:**
+* **`jillegal.demo.web.maxPersonCount`:** Defines how many person can be stored in memory at most. Default value is `1.000.000`.
 
-* **`jillegal.demo.web.saveCountInASchedule`:** 
+* **`jillegal.demo.web.saveCountInASchedule`:** Defines how many person are put to off-heap storage as random in a schedule period (1 second). Default value is `1.000`.
 
-* **`jillegal.demo.web.removeCountInASchedule`:**
+* **`jillegal.demo.web.removeCountInASchedule`:**  Defines how many person are removed from off-heap storage as random in a schedule period (1 second). Default value is `10`.
 
-* **`jillegal.demo.web.getCountInASchedule`:**
+* **`jillegal.demo.web.getCountInASchedule`:** Defines how many person are got (queried) from off-heap storage as random in a schedule period (1 second). Default value is `1.000`.
 
-* **`jillegal.demo.web.ignoreStrings`:**
+* **`jillegal.demo.web.ignoreStrings`:** Ignores string typed fields (`username`, `firstName` and `lastName`) in `Person` object and these fields will be `null`. So, instead of string, more memory can be consumed by `Person` objects. Default value is `false`.
 
-* **`jillegal.demo.web.useScheduledTask`:**
-
-
+* **`jillegal.demo.web.useScheduledTask`:** Enables scheduled tasks to put, remove and get from off-heap storage in parallel from multiple threads. Default value is `false`.
 
