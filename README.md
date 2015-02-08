@@ -28,7 +28,9 @@ HOW TO INSTALL
 		r3.8xlarge		$0.2567 per Hour	$0.9561 per Hour
 ```
 
-* Connect to instance over SSH with `jillegal-demo-web.pem` PEM file.
+* Connect to instance.
+
+For example, over SSH with `jillegal-demo-web.pem` PEM file.
 
 ```
 ssh -i ~/.ssh/jillegal-demo-web.pem <username>@<instance_public_dns_name>
