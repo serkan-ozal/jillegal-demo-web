@@ -11,8 +11,8 @@ import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
 public class PersonStats {
 
-	private static final AtomicLongFieldUpdater<PersonStats> CREATED_UPDATER = 
-			AtomicLongFieldUpdater.newUpdater(PersonStats.class, "created");
+	private static final AtomicLongFieldUpdater<PersonStats> EXISTING_UPDATER = 
+			AtomicLongFieldUpdater.newUpdater(PersonStats.class, "existing");
 	private static final AtomicLongFieldUpdater<PersonStats> GOT_UPDATER = 
 			AtomicLongFieldUpdater.newUpdater(PersonStats.class, "got");
 	private static final AtomicLongFieldUpdater<PersonStats> PUT_UPDATER = 
@@ -20,17 +20,21 @@ public class PersonStats {
 	private static final AtomicLongFieldUpdater<PersonStats> REMOVED_UPDATER = 
 			AtomicLongFieldUpdater.newUpdater(PersonStats.class, "removed");
 	
-	private volatile long created;
+	private volatile long existing;
 	private volatile long got;
 	private volatile long put;
 	private volatile long removed;
 	
-	public long getCreated() {
-		return created;
+	public long getExisting() {
+		return existing;
 	}
 
-	public void increaseCreated() {
-		CREATED_UPDATER.incrementAndGet(this);
+	public void increaseExisting() {
+		EXISTING_UPDATER.incrementAndGet(this);
+	}
+	
+	public void decreaseExisting() {
+		EXISTING_UPDATER.decrementAndGet(this);
 	}
 	
 	public long getGot() {
@@ -59,7 +63,7 @@ public class PersonStats {
 
 	@Override
 	public String toString() {
-		return "PersonStats [created=" + created + ", got=" + got + ", put="
+		return "PersonStats [existing=" + existing + ", got=" + got + ", put="
 				+ put + ", removed=" + removed + "]";
 	}
 	

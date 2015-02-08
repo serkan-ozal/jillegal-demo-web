@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import tr.com.serkanozal.jillegal.demo.web.dao.PersonDAO;
+import tr.com.serkanozal.jillegal.demo.web.domain.ObjectStats;
 import tr.com.serkanozal.jillegal.demo.web.domain.Person;
 import tr.com.serkanozal.jillegal.demo.web.domain.PersonStats;
 import tr.com.serkanozal.jillegal.demo.web.service.PersonService;
@@ -76,7 +77,8 @@ public class PersonServiceImpl implements PersonService {
 	
 	@Autowired
 	private PersonDAO personDAO;
-	private volatile PersonStats personStats = new PersonStats();
+	private PersonStats personStats = new PersonStats();
+	private ObjectStats objectStats = new ObjectStats();
 	
 	private class CharArray {
 		
@@ -212,12 +214,20 @@ public class PersonServiceImpl implements PersonService {
 			CharArray usernameCharArray = USERNAME_CHAR_ARRAY_BUFFER.getFor(key);
 			person.setUsername(offHeapService.newString(usernameCharArray.chars, 0, usernameCharArray.actualLength));
 			//person.setUsername(offHeapService.newString("Username-" + key));
+			objectStats.increaseCreated();
+			objectStats.increaseExisting();
+			
 			CharArray firstNameCharArray = FIRSTNAME_CHAR_ARRAY_BUFFER.getFor(key);
 			person.setFirstName(offHeapService.newString(firstNameCharArray.chars, 0, firstNameCharArray.actualLength));
 			//person.setFirstName(offHeapService.newString("Firstname-" + key));
+			objectStats.increaseCreated();
+			objectStats.increaseExisting();
+			
 			CharArray lastNameCharArray = LASTNAME_CHAR_ARRAY_BUFFER.getFor(key);
 			person.setLastName(offHeapService.newString(lastNameCharArray.chars, 0, lastNameCharArray.actualLength));
 			//person.setLastName(offHeapService.newString("Lastname-" + key));
+			objectStats.increaseCreated();
+			objectStats.increaseExisting();
 		}	
 		person.setBirthDate(
 				(Person.MILLI_SECONDS_IN_A_YEAR * RANDOM.nextInt(30)) + 	// Any year between 1970 and 2000
@@ -229,28 +239,33 @@ public class PersonServiceImpl implements PersonService {
 		return person;
 	}
 	
+	private void doProcess() {
+		for (int i = 0; i < SAVE_COUNT_IN_A_SCHEDULE; i++) {
+			int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
+			Person person = randomizePerson(id, newPerson());
+			saveInternal(person, false);
+		}	
+		for (int i = 0; i < REMOVE_COUNT_IN_A_SCHEDULE; i++) {
+			int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
+			remove(id);
+		}	
+		for (int i = 0; i < GET_COUNT_IN_A_SCHEDULE; i++) {
+			int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
+			get(id);
+		}
+	}
+	
 	private void runProcess() {
 		new Thread() {
 			public void run() {
 				while (true) {
 					try {
-						for (int i = 0; i < SAVE_COUNT_IN_A_SCHEDULE; i++) {
-							int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
-							Person person = randomizePerson(id, newPerson());
-							saveInternal(person, false);
-						}	
-						for (int i = 0; i < REMOVE_COUNT_IN_A_SCHEDULE; i++) {
-							int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
-							remove(id);
-						}	
-						for (int i = 0; i < GET_COUNT_IN_A_SCHEDULE; i++) {
-							int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
-							get(id);
-						}
+						doProcess();
+						
 						Thread.sleep(1000);
 					} 
 					catch (Throwable t) {
-						t.printStackTrace();
+						logger.error("Error occured while processing", t);
 					}
 				}
 			};
@@ -258,21 +273,9 @@ public class PersonServiceImpl implements PersonService {
 	}
 	
 	@Scheduled(initialDelay = 60 * 1000, fixedRate = 1000)
-	public synchronized void process() {
+	public void process() {
 		if (USE_SCHEDULED_TASK) {
-			for (int i = 0; i < SAVE_COUNT_IN_A_SCHEDULE; i++) {
-				int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
-				Person person = randomizePerson(id, newPerson());
-				saveInternal(person, false);
-			}	
-			for (int i = 0; i < REMOVE_COUNT_IN_A_SCHEDULE; i++) {
-				int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
-				remove(id);
-			}	
-			for (int i = 0; i < GET_COUNT_IN_A_SCHEDULE; i++) {
-				int id = RANDOM.nextInt(Person.MAX_PERSON_COUNT);
-				get(id);
-			}
+			doProcess();
 		}	
 	}
 	
@@ -304,7 +307,8 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public Person newPerson() {
 		Person person = offHeapService.newObject(Person.class);
-		personStats.increaseCreated();
+		objectStats.increaseCreated();
+		objectStats.increaseExisting();
 		return person;
 	}
 	
@@ -331,18 +335,27 @@ public class PersonServiceImpl implements PersonService {
 			if (checksEnable) {
 				if (!offHeapService.isInOffHeap(person.getUsername())) {
 					person.setUsername(offHeapService.newString(person.getUsername()));
+					objectStats.increaseCreated();
+					objectStats.increaseExisting();
 				}
 				if (!offHeapService.isInOffHeap(person.getFirstName())) {
 					person.setFirstName(offHeapService.newString(person.getFirstName()));
+					objectStats.increaseCreated();
+					objectStats.increaseExisting();
 				}
 				if (!offHeapService.isInOffHeap(person.getLastName())) {
 					person.setLastName(offHeapService.newString(person.getLastName()));
+					objectStats.increaseCreated();
+					objectStats.increaseExisting();
 				}
 			}
 		}
 		
 		Person oldPerson = personDAO.save(person);
-		if (oldPerson != null) {
+		if (oldPerson == null) {
+			personStats.increaseExisting();
+		}	
+		else {
 			String username = null;
 			String firstName = null;
 			String lastName = null;
@@ -354,23 +367,39 @@ public class PersonServiceImpl implements PersonService {
 			}
 			
 			offHeapService.freeObject(oldPerson);
+			objectStats.increaseDisposed();
+			objectStats.decreaseExisting();
 			
 			if (!IGNORE_STRINGS) {
 				if (checksEnable) {
 					if (username != person.getUsername()) {
 						offHeapService.freeString(username);
+						objectStats.increaseDisposed();
+						objectStats.decreaseExisting();
 					}
 					if (firstName != person.getFirstName()) {
 						offHeapService.freeString(firstName);
+						objectStats.increaseDisposed();
+						objectStats.decreaseExisting();
 					}
 					if (lastName != person.getLastName()) {
 						offHeapService.freeString(lastName);
+						objectStats.increaseDisposed();
+						objectStats.decreaseExisting();
 					}
 				}
 				else {
 					offHeapService.freeString(username);
+					objectStats.increaseDisposed();
+					objectStats.decreaseExisting();
+					
 					offHeapService.freeString(firstName);
+					objectStats.increaseDisposed();
+					objectStats.decreaseExisting();
+					
 					offHeapService.freeString(lastName);
+					objectStats.increaseDisposed();
+					objectStats.decreaseExisting();
 				}
 			}	
 		}
@@ -382,6 +411,8 @@ public class PersonServiceImpl implements PersonService {
 	public boolean remove(long id) {
 		Person removedPerson = personDAO.remove(id);
 		if (removedPerson != null) {
+			personStats.decreaseExisting();
+			
 			String username = null;
 			String firstName = null;
 			String lastName = null;
@@ -393,11 +424,21 @@ public class PersonServiceImpl implements PersonService {
 			}
 			
 			offHeapService.freeObject(removedPerson);
+			objectStats.increaseDisposed();
+			objectStats.decreaseExisting();
 			
 			if (!IGNORE_STRINGS) {
 				offHeapService.freeString(username);
+				objectStats.increaseDisposed();
+				objectStats.decreaseExisting();
+				
 				offHeapService.freeString(firstName);
+				objectStats.increaseDisposed();
+				objectStats.decreaseExisting();
+				
 				offHeapService.freeString(lastName);
+				objectStats.increaseDisposed();
+				objectStats.decreaseExisting();
 			}
 			
 			personStats.increaseRemoved();
@@ -412,6 +453,11 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public PersonStats getPersonStats() {
 		return personStats;
+	}
+	
+	@Override
+	public ObjectStats getObjectStats() {
+		return objectStats;
 	}
 
 }

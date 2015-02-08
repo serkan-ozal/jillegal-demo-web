@@ -12,14 +12,16 @@ import java.util.Date;
 import tr.com.serkanozal.jillegal.demo.web.domain.EnvironmentInfo;
 import tr.com.serkanozal.jillegal.demo.web.domain.GCStats;
 import tr.com.serkanozal.jillegal.demo.web.domain.MemoryStats;
+import tr.com.serkanozal.jillegal.demo.web.domain.ObjectStats;
 import tr.com.serkanozal.jillegal.demo.web.domain.PersonStats;
 
 public interface MonitoringService {
 	
 	Date getStartTime();
 	EnvironmentInfo getEnvironmentInfo();
-	PersonStats getPersonStats();
 	MemoryStats getMemoryStats();
 	GCStats getGCStats();
+	PersonStats getPersonStats();
+	ObjectStats getObjectStats();
 	
 }

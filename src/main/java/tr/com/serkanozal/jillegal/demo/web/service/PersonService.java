@@ -7,6 +7,7 @@
 
 package tr.com.serkanozal.jillegal.demo.web.service;
 
+import tr.com.serkanozal.jillegal.demo.web.domain.ObjectStats;
 import tr.com.serkanozal.jillegal.demo.web.domain.Person;
 import tr.com.serkanozal.jillegal.demo.web.domain.PersonStats;
 
@@ -19,5 +20,6 @@ public interface PersonService {
 	boolean remove(long id);
 	
 	PersonStats getPersonStats();
+	ObjectStats getObjectStats();
 	
 }

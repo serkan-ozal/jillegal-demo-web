@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import tr.com.serkanozal.jillegal.demo.web.domain.EnvironmentInfo;
 import tr.com.serkanozal.jillegal.demo.web.domain.GCStats;
 import tr.com.serkanozal.jillegal.demo.web.domain.MemoryStats;
+import tr.com.serkanozal.jillegal.demo.web.domain.ObjectStats;
 import tr.com.serkanozal.jillegal.demo.web.domain.PersonStats;
 import tr.com.serkanozal.jillegal.demo.web.service.PersonService;
 import tr.com.serkanozal.jillegal.demo.web.service.MonitoringService;
@@ -50,11 +51,12 @@ public class MonitoringServiceImpl implements MonitoringService {
     private static final Method FREE_SWAP_SPACE_SIZE_ATTRIBUTE_GETTER_METHOD = 
     		getMBeanAttributeGetterMethod("FreeSwapSpaceSize");
     
-	private static final Set<String> YOUNG_GC = new HashSet<String>(3);
+	private static final Set<String> YOUNG_GC = new HashSet<String>(4);
     private static final Set<String> OLD_GC = new HashSet<String>(3);
 
     static {
         YOUNG_GC.add("PS Scavenge");
+        YOUNG_GC.add("DefNew");
         YOUNG_GC.add("ParNew");
         YOUNG_GC.add("G1 Young Generation");
 
@@ -151,12 +153,7 @@ public class MonitoringServiceImpl implements MonitoringService {
 	public EnvironmentInfo getEnvironmentInfo() {
 		return environmentInfo;
 	}
-	
-	@Override
-	public PersonStats getPersonStats() {
-		return personService.getPersonStats();
-	}
-		
+
 	@Scheduled(initialDelay = 1000, fixedRate = 1000)
 	private void updateMemoryStats() {
 		memoryStats.setTotalPhysicalMemory(TOTAL_PHYSICAL_MEMORY);
@@ -215,12 +212,23 @@ public class MonitoringServiceImpl implements MonitoringService {
 		return gcStats;
 	}
 	
+	@Override
+	public PersonStats getPersonStats() {
+		return personService.getPersonStats();
+	}
+		
+	@Override
+	public ObjectStats getObjectStats() {
+		return personService.getObjectStats();
+	}
+	
 	@Scheduled(initialDelay = 1000, fixedRate = 1000)
 	private void logMonitoringInformations() {
 		if (!DISABLE_MONITORING_LOGS) {
 			logger.info(memoryStats);
 			logger.info(gcStats);
 			logger.info(getPersonStats());
+			logger.info(getObjectStats());
 		}	
 	}
 	

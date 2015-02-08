@@ -14,6 +14,7 @@ import java.util.TimerTask;
 import tr.com.serkanozal.jillegal.demo.web.domain.EnvironmentInfo;
 import tr.com.serkanozal.jillegal.demo.web.domain.GCStats;
 import tr.com.serkanozal.jillegal.demo.web.domain.MemoryStats;
+import tr.com.serkanozal.jillegal.demo.web.domain.ObjectStats;
 import tr.com.serkanozal.jillegal.demo.web.domain.PersonStats;
 import tr.com.serkanozal.jillegal.demo.web.service.MonitoringService;
 import tr.com.serkanozal.jillegal.demo.web.util.SpringContextProvider;
@@ -204,23 +205,49 @@ public class MonitoringView extends VerticalLayout {
 		
 		final PersonStats personStats = monitoringService.getPersonStats();
 
-		final Label lblCreated = new Label(String.valueOf(personStats.getCreated()));
+		final Label lblExisting = new Label(String.valueOf(personStats.getExisting()));
 		final Label lblGot = new Label(String.valueOf(personStats.getGot()));
-		
-		lytPersonStats.addComponent(new Label("<b>Created: </b>", ContentMode.HTML), 0, 0);
-		lytPersonStats.addComponent(lblCreated, 1, 0);
-		lytPersonStats.addComponent(new Label("<b>Got: </b>", ContentMode.HTML), 2, 0);
-		lytPersonStats.addComponent(lblGot, 3, 0);
-		
 		final Label lblPut = new Label(String.valueOf(personStats.getPut()));
 		final Label lblRemoved = new Label(String.valueOf(personStats.getRemoved()));
 		
-		lytPersonStats.addComponent(new Label("<b>Put: </b>", ContentMode.HTML), 0, 1);
-		lytPersonStats.addComponent(lblPut, 1, 1);
-		lytPersonStats.addComponent(new Label("<b>Removed: </b>", ContentMode.HTML), 2, 1);
-		lytPersonStats.addComponent(lblRemoved, 3, 1);
-	
+		lytPersonStats.addComponent(new Label("<b>Existing: </b>", ContentMode.HTML), 0, 0);
+		lytPersonStats.addComponent(lblExisting, 1, 0);
+		lytPersonStats.addComponent(new Label("<b>Put: </b>", ContentMode.HTML), 2, 0);
+		lytPersonStats.addComponent(lblPut, 3, 0);
+		lytPersonStats.addComponent(new Label("<b>Removed: </b>", ContentMode.HTML), 0, 1);
+		lytPersonStats.addComponent(lblRemoved, 1, 1);
+		lytPersonStats.addComponent(new Label("<b>Got: </b>", ContentMode.HTML), 2, 1);
+		lytPersonStats.addComponent(lblGot, 3, 1);
+		
 		pnlPersonStats.setContent(lytPersonStats);
+		
+		/////////////////////////////////////////////////////////////////////////////////////////
+		
+		final ObjectStats objectStats = monitoringService.getObjectStats();
+		
+		Panel pnlObjectStats = new Panel();
+		pnlObjectStats.setCaption("Object Stats");
+		pnlObjectStats.addStyleName(Reindeer.LAYOUT_BLUE);
+		pnlObjectStats.setWidth("100%");
+		
+		GridLayout lytObjectStats = new GridLayout(6, 1);
+		lytObjectStats.setMargin(true);
+		lytObjectStats.setSpacing(true);
+		lytObjectStats.setSizeFull();
+		lytObjectStats.addStyleName(Reindeer.LAYOUT_BLUE);
+		
+		final Label lblExistingObject = new Label(String.valueOf(objectStats.getExisting()));
+		final Label lblCreatedObject = new Label(String.valueOf(objectStats.getCreated()));
+		final Label lblDisposedObject = new Label(String.valueOf(objectStats.getDisposed()));
+		
+		lytObjectStats.addComponent(new Label("<b>Existing: </b>", ContentMode.HTML), 0, 0);
+		lytObjectStats.addComponent(lblExistingObject, 1, 0);
+		lytObjectStats.addComponent(new Label("<b>Created: </b>", ContentMode.HTML), 2, 0);
+		lytObjectStats.addComponent(lblCreatedObject, 3, 0);
+		lytObjectStats.addComponent(new Label("<b>Disposed: </b>", ContentMode.HTML), 4, 0);
+		lytObjectStats.addComponent(lblDisposedObject, 5, 0);
+		
+		pnlObjectStats.setContent(lytObjectStats);
 		
 		/////////////////////////////////////////////////////////////////////////////////////////
 				
@@ -229,6 +256,7 @@ public class MonitoringView extends VerticalLayout {
 		vl.addComponent(pnlMemoryStats);
 		vl.addComponent(pnlGCStats);
 		vl.addComponent(pnlPersonStats);
+		vl.addComponent(pnlObjectStats);
 		
 		vl.setMargin(true);
 		vl.setSpacing(true);
@@ -286,10 +314,14 @@ public class MonitoringView extends VerticalLayout {
 						lblUnknownCount.setValue(String.valueOf(gcStats.getUnknownCount()));
 						lblUnknownTime.setValue(String.valueOf(gcStats.getUnknownTime()));
 						
-						lblCreated.setValue(String.valueOf(personStats.getCreated()));
+						lblExisting.setValue(String.valueOf(personStats.getExisting()));
 						lblGot.setValue(String.valueOf(personStats.getGot()));
 						lblPut.setValue(String.valueOf(personStats.getPut()));
 						lblRemoved.setValue(String.valueOf(personStats.getRemoved()));
+						
+						lblExistingObject.setValue(String.valueOf(objectStats.getExisting()));
+						lblCreatedObject.setValue(String.valueOf(objectStats.getCreated()));
+						lblDisposedObject.setValue(String.valueOf(objectStats.getDisposed()));
 						
 						UI.getCurrent().push();
 					}
