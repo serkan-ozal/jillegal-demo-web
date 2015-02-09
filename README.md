@@ -130,3 +130,14 @@ CONFIGURATIONS
 
 * **`jillegal.demo.web.useScheduledTask`:** Enables scheduled tasks to put, remove and get from off-heap storage in parallel from multiple threads. Default value is `false`.
 
+TEST RESULTS
+--------------
+
+**Test Results of Jillegal Off-Heap During 1 Day with 10GB Data:**
+
+![Test Results of Jillegal Off-Heap During 1 Day with 10GB Data](https://github.com/serkan-ozal/jillegal-demo-web/blob/master/Jillegal_1Day_10GB_Test.png)
+
+
+**Test Results of Jillegal Off-Heap During 1 Day with 200GB Data:**
+
+Stay tuned :)
