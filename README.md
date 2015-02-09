@@ -92,7 +92,7 @@ export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+StartAtta
 **Example Configuration**:
 
 ```
-export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -verbose:gc -XX:+PrintGCDetails -Xms2g -Xmx4g -XX:+StartAttachListener -Djillegal.demo.web.maxPersonCount=20000000 -Djillegal.offheap.pool.objectCount=20480 -Djillegal.offheap.pool.estimatedStringCount=20480 -Djillegal.offheap.memory.useBatchMemoryAllocatorOn64BitJVM=true"
+export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -verbose:gc -XX:+PrintGCDetails -Xms2g -Xmx4g -XX:+StartAttachListener -Djillegal.demo.web.maxPersonCount=20000000 -Djillegal.offheap.pool.objectCount=20480 -Djillegal.offheap.pool.estimatedStringCount=20480"
 ```
   
 * Run web application and connect to it
@@ -107,8 +107,6 @@ For remote access, go to url `<instance_public_dns_name>:8080/jillegal-demo-web/
 
 CONFIGURATIONS
 --------------
-
-* **`jillegal.offheap.memory.useBatchMemoryAllocatorOn64BitJVM`:** By this configuration, on 64 bit JVM, memory segments are allocated as 2GB sized segments and assigned to callers as the requested size. Default value is `false`.
 
 * **`jillegal.offheap.pool.objectCount`:** Defines how much memory will be allocated for how many object while creating a single object pool. Default value is `1024`.
 
