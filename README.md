@@ -92,7 +92,7 @@ export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+StartAtta
 **Example Configuration**:
 
 ```
-export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -verbose:gc -XX:+PrintGCDetails -Xms2g -Xmx4g -XX:+StartAttachListener -Djillegal.demo.web.maxPersonCount=20000000 -Djillegal.offheap.pool.objectCount=20480 -Djillegal.offheap.pool.estimatedStringCount=20480"
+export MAVEN_OPTS="-XX:-UseCompressedOops -XX:+UseConcMarkSweepGC -verbose:gc -XX:+PrintGCDetails -Xms2g -Xmx4g -XX:+StartAttachListener -Djillegal.demo.web.maxPersonCount=10000000 -Djillegal.offheap.pool.objectCount=20480 -Djillegal.offheap.pool.estimatedStringCount=20480"
 ```
   
 * Run web application and connect to it
