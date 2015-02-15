@@ -1,7 +1,7 @@
 Jillegal-Demo-Web
 =================
 
-Jillegal Demo Web Application
+Jillegal (https://github.com/serkan-ozal/jillegal) Demo Web Application
 
 HOW TO INSTALL
 --------------
