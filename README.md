@@ -35,8 +35,6 @@ For example, over SSH with `jillegal-demo-web.pem` PEM file.
 ```
 ssh -i ~/.ssh/jillegal-demo-web.pem <username>@<instance_public_dns_name>
 ``` 
-	
-For example: `http://ec2-12-34-567-89.compute-1.amazonaws.com:8080/jillegal-demo-web/`
 		
 * Install **"JDK 8"**.
 
@@ -65,7 +63,7 @@ export JAVA_HOME=/usr/lib/jvm/java-8-oracle
 export JAVA8_HOME=$JAVA_HOME
 ```
 
-* Clone and build Jillegal.
+* Clone and build **Jillegal**.
 
 ```	
 git clone https://github.com/serkan-ozal/jillegal.git
@@ -73,7 +71,7 @@ cd jillegal
 mvn clean install -DskipTests=true
 ```
 
-* Clone and build Jillegal-Demo-Web
+* Clone and build **Jillegal-Demo-Web**
 
 ```
 git clone https://github.com/serkan-ozal/jillegal-demo-web.git
